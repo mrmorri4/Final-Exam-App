@@ -1,0 +1,89 @@
+
+# -*- coding: utf-8 -*-
+import streamlit as st
+import pickle
+import pandas as pd
+import sklearn  # This is needed for the pickle file to load!
+
+# Load the trained model
+# --- Put the Model in Drive First---
+with open("final_loan_model.pkl", "rb") as file:
+    model = pickle.load(file)
+
+# Title for the app
+#st.title("Your Loan Approval")
+st.markdown(
+    "<h1 style='text-align: center; background-color: #000080; padding: 10px; color: #F0FFFF;'><b>Your Loan Approval</b></h1>",
+    unsafe_allow_html=True
+)
+
+st.image("https://cdn-icons-gif.flaticon.com/19005/19005108.gif")
+st.header("Enter Loan Details:")
+
+reason = st.selectbox("Reason for Loan", ['Cover An Unexpected Cost', 'Credit Card Refinancing', 'Home Improvement', 'Major Purchase', 'Debt Conslidation', 'Other'])
+requestloanamt = st.slider("Loan Amount", min_value=1000, max_value=50000, step=100)
+FICOscore = st.slider("FICO Score", min_value=0, max_value=850, step=1)
+EverBankruptOrForeclose = st.checkbox("Ever Bankrupt or Foreclosed")
+MonthlyHousingPayment = st.number_input("Monthly Housing Payment",min_value=300, max_value=49500, step=1)
+Lender = st.pills("Lender", ["A", "B", "C"])
+EmploymentStatus = st.pills("Employment Status", ["Full Time", "Part Time", "Unemployed"])
+MonthlyGrossIncome = st.number_input("Monthly Gross Income", min_value=0, max_value=100000, step=1)
+
+# Create the input data as a DataFrame
+input_data = pd.DataFrame({
+    "Reason": [reason],
+    "Requested_Loan_Amount": [requestloanamt],
+    "FICO_score": [FICOscore],
+    "Ever_Bankrupt_or_Foreclosed": [EverBankruptOrForeclose],
+    "Monthly_Housing_Payment": [MonthlyHousingPayment],
+    "Lender": [Lender],
+    "Employment_Status": [EmploymentStatus],
+    "Monthly_Gross_Income": [MonthlyGrossIncome]
+})
+
+# Categorize FICO score into groups
+def get_fico_score_group(score):
+    if 800 <= score <= 850:
+        return 'Excellent'
+    elif 740 <= score <= 799:
+        return 'Very Good'
+    elif 670 <= score <= 739:
+        return 'Good'
+    elif 580 <= score <= 669:
+        return 'Fair'
+    else:
+        return 'Poor'
+
+input_data['FICO_score_group'] = input_data['FICO_score'].apply(get_fico_score_group)
+
+# --- Prepare Data for Prediction ---
+# 1. One-hot encode the user's input.
+# Add 'FICO_score_group' to the columns to be one-hot encoded
+input_data_encoded = pd.get_dummies(input_data, columns=['Reason', 'Lender', 'Employment_Status', 'FICO_score_group'])
+
+# 2. Add any "missing" columns the model expects (fill with 0).
+model_columns = model.feature_names_in_
+for col in model_columns:
+    if col not in input_data_encoded.columns:
+        input_data_encoded[col] = 0
+
+# 3. Reorder/filter columns to exactly match the model's training data.
+input_data_encoded = input_data_encoded[model_columns]
+
+# Predict button
+if st.button("Evaluate Loan"):
+    # Predict using the loaded model
+    prediction = model.predict(input_data_encoded)[0]
+
+    st.write(input_data_encoded)
+    st.write("Prediction:", prediction)
+    st.write("Probabilities:", model.predict_proba(input_data_encoded))
+    st.write(input_data_encoded)
+
+    # Display result
+    if prediction == 1:
+        st.write("Your Loan is Approved!")
+    else:
+        st.write("Your Loan is Denied.")
+
+st.image("https://static.vecteezy.com/system/resources/thumbnails/000/287/135/small/1__284_29.jpg")
