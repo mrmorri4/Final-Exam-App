@@ -24,6 +24,7 @@ reason = st.selectbox("Reason for Loan", ['Cover An Unexpected Cost', 'Credit Ca
 requestloanamt = st.slider("Loan Amount", min_value=1000, max_value=50000, step=100)
 FICOscore = st.slider("FICO Score", min_value=0, max_value=850, step=1)
 FICOscoregroup = st.pills("FICO Score Group", ['Poor (300-579)', 'Fair (580-669)', 'Good (670-739)', 'Very Good (740-799)', 'Excellent (800-850)'])
+EverBankruptOrForeclose = st.checkbox("Ever Bankrupt or Foreclosed")
 MonthlyHousingPayment = st.number_input("Monthly Housing Payment",min_value=300, max_value=49500, step=1)
 Lender = st.pills("Lender", ["A", "B", "C"])
 EmploymentStatus = st.pills("Employment Status", ["Full Time", "Part Time", "Unemployed"])
@@ -38,6 +39,7 @@ input_data = pd.DataFrame({
     "Requested_Loan_Amount": [requestloanamt],
     "FICO_score": [FICOscore],
     "FICO_score_group": [fico_group_str], # Use the extracted string
+    "Ever_Bankrupt_or_Foreclosed": [EverBankruptOrForeclose],
     "Monthly_Housing_Payment": [MonthlyHousingPayment],
     "Lender": [Lender],
     "Employment_Status": [EmploymentStatus],
