@@ -134,6 +134,9 @@ if st.button("Evaluate Loan"):
     else:
         st.error("Your Loan is Denied.")
 
+st.write(model.feature_names_in_)
+st.write(input_data_encoded.sum().sort_values(ascending=False))
+
 # -----------------------------
 # FOOTER IMAGE
 # -----------------------------
