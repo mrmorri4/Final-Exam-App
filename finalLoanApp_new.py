@@ -98,13 +98,7 @@ input_data = pd.DataFrame([{
     "Lender": clean(lender)
 }])
 
-# convert categorical variables ONLY
-cat_cols = ["Reason", "Fico_Score_group", "Employment_Status",
-            "Employment_Sector", "Lender"]
-
-input_data_encoded = input_data.copy()
-
-input_data_encoded = pd.get_dummies(input_data_encoded, columns=cat_cols, drop_first=True)
+input_data_encoded = pd.get_dummies(input_data, drop_first=True)
 
 # FORCE EXACT TRAINING COLUMNS
 input_data_encoded = input_data_encoded.reindex(columns=model_columns, fill_value=0)
@@ -136,6 +130,8 @@ st.write(model.feature_names_in_)
 st.write(input_data_encoded.sum().sort_values(ascending=False))
 st.write("Categorical sum check:")
 st.write(input_data_encoded.filter(like="_").sum().sort_values())
+st.write(input_data_encoded.sum().sort_values())
+st.write(input_data_encoded.filter(like="_").sum())
 
 # -----------------------------
 # FOOTER IMAGE
