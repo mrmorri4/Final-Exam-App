@@ -8,7 +8,7 @@ import pandas as pd
 # -----------------------------
 with open("final_loan_model.pkl", "rb") as file:
     model = pickle.load(file)
-
+model_columns = pickle.load(open("model_columns.pkl", "rb"))
 # -----------------------------
 # PAGE HEADER
 # -----------------------------
@@ -98,18 +98,16 @@ input_data = pd.DataFrame([{
     "Lender": clean(lender)
 }])
 
-# -----------------------------
-# ONE-HOT ENCODING (ONLY ONCE)
-# -----------------------------
-input_data_encoded = pd.get_dummies(input_data, drop_first=True)
+# convert categorical variables ONLY
+cat_cols = ["Reason", "Fico_Score_group", "Employment_Status",
+            "Employment_Sector", "Lender"]
 
-# -----------------------------
-# ALIGN TO MODEL FEATURES
-# -----------------------------
-input_data_encoded = input_data_encoded.reindex(
-    columns=model.feature_names_in_,
-    fill_value=0
-)
+input_data_encoded = input_data.copy()
+
+input_data_encoded = pd.get_dummies(input_data_encoded, columns=cat_cols, drop_first=True)
+
+# FORCE EXACT TRAINING COLUMNS
+input_data_encoded = input_data_encoded.reindex(columns=model_columns, fill_value=0)
 
 # -----------------------------
 # PREDICTION
@@ -136,6 +134,8 @@ if st.button("Evaluate Loan"):
 
 st.write(model.feature_names_in_)
 st.write(input_data_encoded.sum().sort_values(ascending=False))
+st.write("Categorical sum check:")
+st.write(input_data_encoded.filter(like="_").sum().sort_values())
 
 # -----------------------------
 # FOOTER IMAGE
