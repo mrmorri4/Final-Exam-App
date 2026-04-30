@@ -35,7 +35,8 @@ MonthlyHousingPayment = st.number_input("Monthly Housing Payment",min_value=300,
 lender = st.selectbox("Lender", ["A", "B", "C"])
 employment_status = st.selectbox("Employment Status", [
     "full_time",
-    "part_time"
+    "part_time",
+    "unemployed"
 ])
 employment_sector = st.selectbox("Employment Sector", [
     "consumer_discretionary",
