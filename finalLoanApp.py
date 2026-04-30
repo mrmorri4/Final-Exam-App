@@ -32,8 +32,8 @@ requestloanamt = st.slider("Loan Amount", min_value=100, max_value=50000, step=1
 FICOscore = st.slider("FICO Score", min_value=0, max_value=850, step=1)
 EverBankruptOrForeclose = st.checkbox("Ever Bankrupt or Foreclosed")
 MonthlyHousingPayment = st.number_input("Monthly Housing Payment",min_value=0, max_value=500000, step=1)
-Lender = st.selectbox("Lender", ["A", "B", "C"])
-EmploymentStatus = st.selectbox("Employment Status", ["full_time", "part_time", "unemployed"])
+lender = st.selectbox("Lender", ["A", "B", "C"])
+employment_status = st.selectbox("Employment Status", ["full_time", "part_time", "unemployed"])
 employment_sector = st.selectbox("Employment Sector", [
     "consumer_discretionary",
     "information_technology",
