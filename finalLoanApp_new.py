@@ -80,7 +80,7 @@ input_data = pd.DataFrame([{
     "Lender": lender
 }])
 
-input_data['FICO_score_group'] = input_data['FICO_score'].apply(get_fico_score_group)
+input_data['FICO_score_group'] = input_data['FICO_score'].apply(fico_group)
 input_data["Reason"] = input_data["Reason"].str.strip().str.lower().str.replace(" ", "_")
 input_data["Lender"] = input_data["Lender"].str.strip().str.lower()
 input_data["Employment_Status"] = input_data["Employment_Status"].str.strip().str.lower().str.replace(" ", "_")
